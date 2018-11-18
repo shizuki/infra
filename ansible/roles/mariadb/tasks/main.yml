@@ -1,0 +1,41 @@
+---
+
+- name: mariadb10.2のリポジトリをインストール
+  become: yes
+  template:
+    src: MariaDB_repo.j2
+    dest: /etc/yum.repos.d/MariaDB.repo
+- name: MariaDBとAnsible用mysqlモジュールのインストール
+  become: yes
+  yum:
+    name:
+      - MariaDB-server
+      - MariaDB-common
+      - MySQL-python
+- name: サービス有効化と起動
+  become: yes
+  systemd:
+    name: mariadb
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+- name: mysql_secure_installationのsqlを実行
+  mysql_db:
+    state: import
+    name: all
+    target: /vagrant/ansible/roles/mariadb/files/mysql_secure_installation.sql
+- name: movieデータベース作成
+  mysql_db:
+    name: movie
+    state: present
+- name: rootパスワード設定
+  mysql_user:
+    name: "root"
+    host: "{{item}}"
+    password: "{{ mariadb.root_password }}"
+  with_items:
+    - 127.0.0.1
+    - ::1
+    - localhost.localdomain
+    - localhost
+

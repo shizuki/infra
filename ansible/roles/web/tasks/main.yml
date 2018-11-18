@@ -1,0 +1,28 @@
+---
+
+- name: Apache2.4のインストール
+  become: yes
+  yum: name="{{item}}" state=present
+  with_items:
+    - apr
+    - apr-util
+    - httpd
+- name: .htaccessの有効化
+  become: yes
+  replace: 
+    path=/etc/httpd/conf/httpd.conf
+    regexp='AllowOverride None'
+    replace='AllowOverride All'
+- name: suexec、rewriteの有効化
+  become: yes
+  copy: src={{item}} dest=/etc/httpd/conf.modules.d mode=0644
+  with_items:
+    - "01-rewrite.conf"
+    - "01-suexec.conf"
+- name: サービス有効化と起動
+  become: yes
+  systemd:
+    name: httpd.service
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

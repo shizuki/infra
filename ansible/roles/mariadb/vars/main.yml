@@ -1,0 +1,9 @@
+---
+
+mariadb:
+  #rootパスワード
+  root_password: << Enter your root password >>
+  #インストールするMariaDBのバージョン
+  install_version: 10.2
+  #対象Linuxのディストリビューションとアーキテクチャ
+  distr_and_arch: rhel7-amd64

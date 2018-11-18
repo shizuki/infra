@@ -1,0 +1,42 @@
+---
+
+- name: minioユーザー追加
+  user:
+    name: minio-user
+    shell: /sbin/nologin
+- name: データ保存用ディレクトリ作成
+  become: yes
+  file:
+    path: "{{item}}"
+    state: directory
+    mode: 0777
+  with_items:
+    - /var/minio/s3/lms
+    - /var/minio/s3/moviegen
+- name: ダウンロード
+  become: yes
+  get_url:
+    url: https://dl.minio.io/server/minio/release/linux-amd64/minio
+    dest: /usr/local/bin/minio
+- name: 実行権限付与
+  become: yes
+  file:
+    path: /usr/local/bin/minio
+    mode: u+x,g+x,o+x
+- name: サービス起動スクリプトダウンロード
+  become: yes
+  get_url:
+    url: https://raw.githubusercontent.com/minio/minio-service/master/linux-systemd/minio.service
+    dest: /etc/systemd/system/minio.service
+- name: 設定ファイルコピー
+  become: yes
+  copy:
+    src: minio
+    dest: /etc/default
+- name: サービス有効化と起動
+  become: yes
+  systemd:
+    name: minio.service
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

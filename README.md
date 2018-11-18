@@ -1,2 +1,2 @@
 # infra
-インフラ関係？
+AmazonLinux2でのlamp環境構築用

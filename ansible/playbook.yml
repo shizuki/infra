@@ -1,0 +1,14 @@
+---
+
+- name: 全般的な設定
+  hosts: all
+  become: yes
+  remote_user: vagrant
+
+  roles:
+    - common
+    - yum
+    - minio
+    - web
+    - php
+    - mariadb

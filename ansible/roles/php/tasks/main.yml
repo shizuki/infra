@@ -1,0 +1,58 @@
+---
+
+- name: PHPのインストール
+  become: yes
+  yum:
+    name:
+      - php
+      - php-cli
+      - php-common
+      - php-dbg
+      - php-json
+      - php-mbstring
+      - php-mysqlnd
+      - php-opcache
+      - php-pdo
+      - php-process
+      - php-pear
+      - php-xml
+#      - php-zip
+      - php-devel
+#      - zlib-devel
+    state: present
+- name: opcacheの設定
+  become: yes
+  lineinfile:
+    path: /etc/php.d/10-opcache.ini
+    regexp: '^(zend_extension)=.*$'
+    line: '\1=opcache.so'
+#  ini_file: path=/etc/php.d/10-opcache.ini section=null option=zend_extension value=opcache.so
+- name: PHPの設定
+  become: yes
+  ini_file: path=/etc/php.ini section="{{item.sect}}" option="{{item.opt}}" value="{{item.val}}"
+  with_items:
+    # 使用メモリ上限
+    - { sect: "PHP", opt: "memory_limit", val: "512M" }
+    # 内部文字エンコーディングのデフォルト値 
+    - { sect: "PHP", opt: "default_charset", val: "UTF-8" }
+    # タイムゾーン
+    - { sect: "Date", opt: "date.timezone", val: "Asia/Tokyo" }
+    # 言語設定(NLS)のデフォルト
+    - { sect: "mbstring", opt: "mbstring.language", val: "Japanese" }
+- name: php-zipのインストール
+  become: yes
+  shell: pecl install zip-1.13.5
+  args:
+    executable: /bin/bash
+- name: php-zip読み込み用ファイル配置
+  become: yes
+  copy:
+    src: 20-zip.ini
+    dest: /etc/php.d
+- name: httpdの(再)起動
+  become: yes
+  systemd:
+    name: httpd.service
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
