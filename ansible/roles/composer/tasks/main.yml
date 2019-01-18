@@ -1,0 +1,38 @@
+---
+
+- name: aws-sdk-phpのインストール
+  composer:
+    command: require
+    arguments: aws/aws-sdk-php
+    working_dir: /home/composer
+- name: aws-sdk-phpのシンボリックリンクを作成
+  file:
+    src: /home/composer/vendor
+    dest: /var/www/html/aws
+    owner: vagrant
+    group: vagrant
+    mode: 755
+    state: link
+#- name: phpunitのインストール
+#  composer:
+#    command: require
+#    arguments: phpunit/phpunit
+#    working_dir: /home/composer
+#- name: phpunitのシンボリックリンクを作成
+#  become: yes
+#  file:
+#    src: /home/composer/vendor/phpunit/phpunit/src/bin/phpunit
+#    src: /home/composer/vendor/phpunit
+#    dest: /usr/bin/phpunit
+#    state: link
+- name: phpmdのインストール
+  composer:
+    command: require
+    arguments: phpmd/phpmd:"@stable"
+    working_dir: /home/composer
+- name: phpmdのシンボリックリンクを作成
+  become: yes
+  file:
+    src: /home/composer/vendor/phpmd/phpmd/src/bin/phpmd
+    dest: /usr/bin/phpmd
+    state: link

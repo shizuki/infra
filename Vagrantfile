@@ -2,9 +2,9 @@
 # vi: set ft=ruby :
 # Vagrantの設定を開始する
 Vagrant.configure("2") do |config|
-  # boxはstakahashi/amazonlinux2を使う
-  config.vm.box = "stakahashi/amazonlinux2"
-  # GuestAdditionの自動アップデートをしない
+  # boxはwate/amazon-linuxを使う
+  config.vm.box = "wate/amazon-linux"
+  # boxの自動アップデートをしない
   config.vm.box_check_update = false
   config.vbguest.no_remote = true
   # ポートフォワーディングの設定
@@ -12,8 +12,13 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 443, host: 443
   config.vm.network "forwarded_port", guest: 8601, host: 8601
   config.vm.network "forwarded_port", guest: 9000, host: 9000
+  # ネットワーク設定
+  # 固定
+  #config.vm.network "private_network", ip: "192.168.1.222"
+  # DHCP
+  config.vm.network "private_network", type: "dhcp"
   # ホスト <=> ゲスト間の共有フォルダの設定
-  config.vm.synced_folder "./html", "/var/www/html"
+  config.vm.synced_folder "./html", "/var/www/html", type: "nfs"
   # Virtualboxの設定とVMのハードウェア的設定
   config.vm.provider "virtualbox" do |vb|
     # virtualboxのGUIは表示しない
@@ -27,17 +32,15 @@ Vagrant.configure("2") do |config|
   #アプリケーションのインストールやOSの設定をいじくるところ
   config.vm.provision "shell", inline: <<-SHELL
     # shellを起動してansibleの準備
-    # ansible2、php7.1のリポジトリを有効化
-    sudo amazon-linux-extras install ansible2 php7.1
+    # ansible2、lamp-mariadb10.2-php7.2 epelのリポジトリを有効化
+    sudo amazon-linux-extras install ansible2 lamp-mariadb10.2-php7.2 epel
     # ansible2をインストール
     sudo yum -y install ansible
     # node.jsのリポジトリをインストール
-    curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
-#    # yarnのリポジトリをインストール
-#    curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
-    # MySQL8.0のリポジトリをインストール
-#    wget https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm | sudo rpm -Uvh mysql80-community-release-el7-1.noarch.rpm
-    # Jinja2のアップデート
+    curl --silent --location https://rpm.nodesource.com/setup_10.x | sudo bash -
+    # yarnのリポジトリをインストール
+    curl -sL https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+    # Jinja2とansibleのアップデート
     sudo easy_install pip
     sudo easy_install --upgrade pip
     sudo cp /usr/bin/pip /usr/sbin

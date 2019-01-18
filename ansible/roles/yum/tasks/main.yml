@@ -1,2 +1,46 @@
 ---
 
+#- name: リポジトリの更新とインストール済みパッケージのアップデート
+#  become: yes
+#  yum:
+#- name: gitのインストール
+#  become: yes
+#  yum:
+#    name: git
+#    state: present
+#- name: aclのインストール
+#  become: yes
+#  yum:
+#    name: acl
+#    state: present
+#- name: nodejsのインストール
+#  become: yes
+#  yum:
+#    name: nodejs
+#    state: present
+#- name: zlib-develのインストール
+#  become: yes
+#  yum:
+#    name: zlib-devel
+#    state: present
+#- name: yarnのインストール
+#  become: yes
+#  yum:
+#    name: yarn
+#    state: present
+#- name: composerのインストール
+#  become: yes
+#  yum:
+#    name: composer
+#    state: present
+- name: 開発に必要なパッケージのインストール
+  become: yes
+  yum:
+    state: present
+    name:
+      - acl
+      - git
+      - nodejs
+      - zlib-devel
+      - yarn
+      - composer

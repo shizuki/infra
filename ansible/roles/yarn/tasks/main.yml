@@ -1,0 +1,11 @@
+---
+
+- name: package.jsonの記述に従ってnodeモジュールをインストール
+  yarn:
+    path: /home/ec2-user
+- name: node_moduelsのシンボリックリンクを作成
+  file:
+    src: /home/ec2-user/node_moduels
+    dest: /var/www/html/front-end/dev/node_moduels
+    mode: 777
+    state: link

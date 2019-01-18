@@ -3,6 +3,7 @@
 - name: PHPのインストール
   become: yes
   yum:
+    state: present
     name:
       - php
       - php-cli
@@ -19,7 +20,6 @@
 #      - php-zip
       - php-devel
 #      - zlib-devel
-    state: present
 - name: opcacheの設定
   become: yes
   lineinfile:
@@ -39,16 +39,16 @@
     - { sect: "Date", opt: "date.timezone", val: "Asia/Tokyo" }
     # 言語設定(NLS)のデフォルト
     - { sect: "mbstring", opt: "mbstring.language", val: "Japanese" }
-- name: php-zipのインストール
-  become: yes
-  shell: pecl install zip-1.13.5
-  args:
-    executable: /bin/bash
-- name: php-zip読み込み用ファイル配置
-  become: yes
-  copy:
-    src: 20-zip.ini
-    dest: /etc/php.d
+#- name: php-zipのインストール
+#  become: yes
+#  shell: pecl install zip-1.13.5
+#  args:
+#    executable: /bin/bash
+#- name: php-zip読み込み用ファイル配置
+#  become: yes
+#  copy:
+#    src: 20-zip.ini
+#    dest: /etc/php.d
 - name: httpdの(再)起動
   become: yes
   systemd:

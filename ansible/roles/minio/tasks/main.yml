@@ -33,7 +33,7 @@
   copy:
     src: minio
     dest: /etc/default
-- name: サービス有効化と起動
+- name: minioサービス有効化と起動
   become: yes
   systemd:
     name: minio.service

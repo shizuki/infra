@@ -1,18 +1,14 @@
 ---
 
-- name: mariadb10.2のリポジトリをインストール
-  become: yes
-  template:
-    src: MariaDB_repo.j2
-    dest: /etc/yum.repos.d/MariaDB.repo
 - name: MariaDBとAnsible用mysqlモジュールのインストール
   become: yes
   yum:
+    state: present
     name:
-      - MariaDB-server
-      - MariaDB-common
+      - mariadb-server
+      - mariadb-common
       - MySQL-python
-- name: サービス有効化と起動
+- name: mariaDBサービス有効化と起動
   become: yes
   systemd:
     name: mariadb
