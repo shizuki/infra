@@ -13,6 +13,7 @@ var $ = gulpLoadPlugins();  // Gulp プラグインを一括で読み込む
 gulp.task('min-css', function() {
     return gulp
         .src("css/" + fileName + ".css")  // css/ 配下の指定ファイルを対象に圧縮する
+        .pipe(sourcemaps.init())        
         .pipe($.cleanCss(
         {
             compatibility: 'ie7',   // 互換性の設定
@@ -29,6 +30,7 @@ gulp.task('min-css', function() {
     .pipe(rename({
         extname: '.min.css'
     }))
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest('../dist/css/'));  // dist/css/ 配下に出力する
 });
 
@@ -40,8 +42,8 @@ gulp.task('min-css', function() {
 gulp.task('sass', function() {
     return gulp
         .src("sass/" + fileName + ".scss")  // sass/ 配下の指定ファイルを対象にコンパイルする
-    .pipe(sass())
-    .pipe(rename({
+        .pipe(sass())
+        .pipe(rename({
         extname: '.min.css'
     }))
     .pipe(gulp.dest('../dist/css/'));  // dist/css/ 配下に出力する
@@ -55,6 +57,7 @@ gulp.task('sass', function() {
 gulp.task('min-js', function() {
     return gulp
         .src("js/*.js")  // js/ 配下の全ファイルを対象に圧縮する
+        .pipe(sourcemaps.init())
         .pipe($.plumber())  // エラー時にプロセスが落ちないようにする
         .pipe($.babel())
         .pipe($.uglify({
@@ -67,6 +70,7 @@ gulp.task('min-js', function() {
         .pipe($.rename({
             extname: '.min.js'
         }))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest('../dist/js/'));  // dist/js/ 配下に出力する
 });
 
